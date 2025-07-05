@@ -10,4 +10,3 @@ export const deleteNote = (noteId) =>
 
 export const updateNote = (noteId, note) =>
   axios.put(`${BASE_URL}/note/id/${encodeURIComponent(noteId)}`, note);
-

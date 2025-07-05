@@ -3,7 +3,7 @@ import { MdDelete } from "react-icons/md";
 
 export default function NoteCard({ note, onDelete }) {
   return (
-    <div className="group relative bg-[#1e1e1e] text-white p-5 rounded-xl border border-[#3c4043] min-h-[104px] w-full break-words font-['Inter'] shadow-sm hover:shadow-md transition-shadow duration-200">
+    <div className="group relative bg-[#202124] text-white p-5 rounded-xl border border-[#3c4043] min-h-[104px] w-full break-words font-['Inter'] shadow-sm hover:shadow-md transition-shadow duration-200">
       {/* Title */}
       {note.title && (
         <h2 className="text-base font-medium mb-2 leading-tight">
