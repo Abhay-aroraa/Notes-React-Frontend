@@ -1,33 +1,51 @@
-import { HiDotsVertical } from "react-icons/hi";
 import { MdDelete } from "react-icons/md";
+import {
+  FaThumbtack,
+  FaPalette,
+  FaBell,
+  FaUserPlus,
+  FaImage,
+  FaEllipsisV,
+} from "react-icons/fa";
 
-export default function NoteCard({ note, onDelete }) {
+export default function NoteCard({ note, onDelete, onClick }) {
   return (
-    <div className="group relative bg-[#202124] text-white p-5 rounded-xl border border-[#3c4043] min-h-[104px] w-full break-words font-['Inter'] shadow-sm hover:shadow-md transition-shadow duration-200">
-      {/* Title */}
-      {note.title && (
-        <h2 className="text-base font-medium mb-2 leading-tight">
-          {note.title}
-        </h2>
-      )}
+    <div
+      onClick={onClick}
+      className="group relative bg-[#202124] text-white p-5 rounded-xl border border-[#3c4043] min-h-[140px] w-full break-words font-['Inter'] shadow-sm hover:shadow-md transition-shadow duration-200 cursor-pointer flex flex-col justify-between"
+    >
+      {/* Pin icon - top right on hover */}
+      <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-gray-400 hover:text-white z-10">
+        <FaThumbtack className="cursor-pointer" title="Pin note" />
+      </div>
 
-      {/* Content */}
-      <p className="text-sm whitespace-pre-wrap leading-snug text-gray-300">
-        {note.content}
-      </p>
+      {/* Title and content */}
+      <div>
+        {note.title && (
+          <h2 className="text-base font-medium mb-2 leading-tight pr-6">
+            {note.title}
+          </h2>
+        )}
+        <p className="text-sm whitespace-pre-wrap leading-snug text-gray-300">
+          {note.content}
+        </p>
+      </div>
 
-      {/* Actions */}
-      <div className="absolute bottom-3 right-3 flex items-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-        <button
-          onClick={() => onDelete(note.id)}
-          className="text-gray-300 hover:text-gray-400 transition"
-          title="Delete"
-        >
-          <MdDelete className="text-xl" />
-        </button>
-        <button title="More options" className="text-gray-300 hover:text-gray-400">
-          <HiDotsVertical className="text-xl" />
-        </button>
+      {/* Bottom icons - only on hover */}
+      <div className="mt-3 flex items-center space-x-4 text-gray-400 text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+        <FaPalette className="hover:text-white cursor-pointer" title="Change color" />
+        <FaBell className="hover:text-white cursor-pointer" title="Remind me" />
+        <FaUserPlus className="hover:text-white cursor-pointer" title="Collaborator" />
+        <FaImage className="hover:text-white cursor-pointer" title="Add image" />
+        <FaEllipsisV className="hover:text-white cursor-pointer" title="More options" />
+        <MdDelete
+          onClick={(e) => {
+            e.stopPropagation();
+            onDelete(note.id);
+          }}
+          className="hover:text-white cursor-pointer text-base"
+          title="Delete note"
+        />
       </div>
     </div>
   );

@@ -1,16 +1,34 @@
 import { useEffect, useState } from "react";
-import { getAllNotes, createNote, deleteNote } from "../services/noteService";
+import {
+  getAllNotes,
+  createNote,
+  deleteNote,
+  updateNote,
+} from "../services/noteService";
 import NoteList from "../components/NoteList";
-import { FaBars, FaPlus, FaTimes } from "react-icons/fa";
+import {
+  FaBars,
+  FaPlus,
+  FaTimes,
+  FaTrash,
+  FaArchive,
+} from "react-icons/fa";
 import AddNotePopup from "./AddNote";
 
 export default function Home() {
   const [notes, setNotes] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
   const [isLoginVisible, setIsLoginVisible] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedNote, setSelectedNote] = useState(null);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  
+ const filteredNotes = notes.filter(
+  (note) =>
+    note.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    note.content.toLowerCase().includes(searchQuery.toLowerCase())
+);
 
   const openLogin = () => {
     setIsLoginVisible(true);
@@ -28,6 +46,10 @@ export default function Home() {
       .catch((err) => console.error(err));
   }, []);
 
+  useEffect(() => {
+    document.body.style.overflow = isLoginVisible ? "hidden" : "auto";
+  }, [isLoginVisible]);
+
   const handleDelete = (id) => {
     deleteNote(id)
       .then(() => {
@@ -36,17 +58,32 @@ export default function Home() {
       .catch((err) => console.error("Delete failed:", err));
   };
 
-  
+  const handleNoteClick = (note) => {
+    setSelectedNote(note);
+    setIsPopupOpen(true);
+  };
 
   const handleAddNote = (note) => {
     createNote(note)
       .then((res) => {
         setNotes([res.data, ...notes]);
-        setTitle("");
-        setContent("");
         setIsModalOpen(false);
       })
       .catch((err) => console.error("Error adding note:", err));
+  };
+
+  const handleNoteUpdate = (updatedNote) => {
+    updateNote(updatedNote.id, updatedNote)
+      .then((res) => {
+        setNotes((prevNotes) =>
+          prevNotes.map((note) =>
+            note.id === updatedNote.id ? res.data : note
+          )
+        );
+        setIsPopupOpen(false);
+        setSelectedNote(null);
+      })
+      .catch((err) => console.error("Update failed:", err));
   };
 
   const handleEmptyBin = () => {
@@ -58,41 +95,57 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-[#171717] text-white font-sans flex ">
-      {/* Sidebar */}
-      <div
-        className={`fixed top-0 left-0 h-full bg-[#1f1f1f] shadow-lg z-50 transform transition-transform duration-300 ${isAnimating ? "translate-x-" : "-translate-x-full"
-          }`}
-        style={{ width: "250px" }}
-      >
-        {/* Close Button */}
-        <div className="flex justify-end p-4">
-          <FaTimes
-            className="text-white text-xl cursor-pointer hover:text-gray-400"
-            onClick={closeLogin}
-          />
-        </div>
+    <div className="min-h-screen bg-[#171717] text-white font-sans flex relative overflow-x-hidden">
+   
+      {isLoginVisible && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-40"
+          onClick={closeLogin}
+        ></div>
+      )}
 
-        {/* Sidebar Options */}
-        <div className="px-4 space-y-4">
-          <button
-            onClick={handleEmptyBin}
-            className="w-full text-left text-white font-medium"
-          >
-            Empty Bin
-          </button>
-          <button
-            onClick={handleViewArchived}
-            className="w-full text-left text-white font-medium"
-          >
-            Archived
-          </button>
+      {/* Sidebar */}
+      {isLoginVisible && (
+        <div
+          className={`fixed top-0 left-0 h-full bg-[#1f1f1f] z-50 transform transition-transform duration-300 ${isAnimating ? "translate-x-0" : "-translate-x-full"
+            }`}
+          style={{ width: "100%", maxWidth: "250px" }}
+        >
+          <div className="flex items-center justify-between px-6 py-8 border-b border-gray-700">
+            <h2 className="text-xl font-semibold text-white">MyNotes</h2>
+            <FaTimes
+              className="text-white text-lg cursor-pointer"
+              onClick={closeLogin}
+            />
+          </div>
+
+          <div className="flex flex-col px-6 py-4 space-y-4">
+            <button
+              onClick={handleEmptyBin}
+              className="flex items-center gap-3 px-3 py-2 text-white rounded-md hover:bg-[#2c2c2c] transition"
+            >
+              <FaTrash />
+              <span>Empty Bin</span>
+            </button>
+
+            <button
+              onClick={handleViewArchived}
+              className="flex items-center gap-3 px-3 py-2 text-white rounded-md hover:bg-[#2c2c2c] transition"
+            >
+              <FaArchive />
+              <span>Archived</span>
+            </button>
+          </div>
+
+          <div className="absolute bottom-4 left-6 text-gray-500 text-sm">
+            © 2025 MyNotes
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Main Content */}
       <div
-        className={`flex-1 transition-all duration-300 ${isLoginVisible ? "ml-[250px]" : "ml-0"
+        className={`flex-1 transition-all duration-300 ${isLoginVisible ? "lg:ml-[250px]" : "ml-0"
           }`}
       >
         {/* Header */}
@@ -104,6 +157,8 @@ export default function Home() {
           <input
             type="text"
             placeholder="Search your note..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
             className="flex-1 bg-[#202124] h-12 px-4 rounded-lg outline-none focus:ring-2 focus:ring-gray-600"
           />
         </header>
@@ -111,22 +166,39 @@ export default function Home() {
         {/* Notes Section */}
         <main className="px-4 sm:px-6 py-6">
           {notes.length === 0 ? (
-            <p className="text-center text-gray-400 mt-10">No notes available.</p>
+            <p className="text-center text-gray-400 mt-10">
+              No notes available.
+            </p>
           ) : (
-            <NoteList notes={notes} onDelete={handleDelete} />
+            <NoteList
+              notes={filteredNotes}
+              onDelete={handleDelete}
+              onNoteClick={handleNoteClick}
+            />
           )}
         </main>
 
         {/* Add Note Modal */}
         {isModalOpen && (
-          <div className="fixed inset-0 z-20 backdrop-blur-[1px] bg-black/20 transition-opacity duration-300"></div>
+          <>
+            <div className="fixed inset-0 z-20 backdrop-blur-[1px] bg-black/20 transition-opacity duration-300"></div>
+            <AddNotePopup
+              onAdd={handleAddNote}
+              onClose={() => setIsModalOpen(false)}
+            />
+          </>
         )}
 
-        {isModalOpen && (
-          <AddNotePopup
-            onAdd={(note) => handleAddNote(note)}
-            onClose={() => setIsModalOpen(false)}
-          />
+        {/* Edit Note Modal */}
+        {isPopupOpen && (
+          <>
+            <div className="fixed inset-0 z-20 backdrop-blur-[1px] bg-black/20 transition-opacity duration-300"></div>
+            <AddNotePopup
+              note={selectedNote}
+              onUpdate={handleNoteUpdate}
+              onClose={() => setIsPopupOpen(false)}
+            />
+          </>
         )}
 
         {/* Floating Add Button */}
