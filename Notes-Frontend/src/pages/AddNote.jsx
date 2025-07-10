@@ -10,7 +10,7 @@ import {
   FaThumbtack,
 } from "react-icons/fa";
 
-export default function AddNotePopup({note, onAdd, onClose, onUpdate }) {
+export default function AddNotePopup({note, onAdd, onClose, onUpdate,pinNote }) {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
 
@@ -82,7 +82,7 @@ export default function AddNotePopup({note, onAdd, onClose, onUpdate }) {
               onKeyDown={handleTitleKeyDown}
               autoFocus
             />
-            <FaThumbtack className="text-gray-400 cursor-pointer hover:text-white" />
+            <FaThumbtack className="text-gray-400 cursor-pointer hover:text-white" onClick={pinNote} />
           </div>
 
           <textarea
@@ -101,8 +101,8 @@ export default function AddNotePopup({note, onAdd, onClose, onUpdate }) {
               <FaUserPlus className="hover:text-white cursor-pointer" />
               <FaImage className="hover:text-white cursor-pointer" />
               <FaEllipsisV className="hover:text-white cursor-pointer" />
-              {/* <FaUndo className="hover:text-white cursor-pointer" />
-              <FaRedo className="hover:text-white cursor-pointer" /> */}
+              <FaUndo className="hover:text-white cursor-pointer" />
+              <FaRedo className="hover:text-white cursor-pointer" />
             </div>
 
             <div className="flex items-center gap-3">

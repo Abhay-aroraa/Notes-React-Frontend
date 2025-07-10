@@ -4,6 +4,7 @@ import {
   createNote,
   deleteNote,
   updateNote,
+  pinUnpinNotes 
 } from "../services/noteService";
 import NoteList from "../components/NoteList";
 import {
@@ -23,17 +24,29 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedNote, setSelectedNote] = useState(null);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-  
- const filteredNotes = notes.filter(
-  (note) =>
-    note.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    note.content.toLowerCase().includes(searchQuery.toLowerCase())
-);
+
+  const filteredNotes = notes.filter(
+    (note) =>
+      note.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      note.content.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const openLogin = () => {
     setIsLoginVisible(true);
     setTimeout(() => setIsAnimating(true), 10);
   };
+
+const pinNote = (noteId) => {
+   pinUnpinNotes(noteId)
+    .then(() => {
+      setNotes((prevNotes) =>
+        prevNotes.map((note) =>
+          note._id === noteId ? { ...note, pinned: !note.pinned } : note
+        )
+      );
+    })
+    .catch((err) => console.error("Failed to pin/unpin note", err));
+};
 
   const closeLogin = () => {
     setIsAnimating(false);
@@ -48,7 +61,7 @@ export default function Home() {
 
   useEffect(() => {
     document.body.style.overflow = isLoginVisible ? "hidden" : "auto";
-  }, [isLoginVisible]);
+  }, [isLoginVisible,pinNote]);
 
   const handleDelete = (id) => {
     deleteNote(id)
@@ -96,7 +109,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[#171717] text-white font-sans flex relative overflow-x-hidden">
-   
+
       {isLoginVisible && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 z-40"
@@ -104,7 +117,7 @@ export default function Home() {
         ></div>
       )}
 
-      {/* Sidebar */}
+ 
       {isLoginVisible && (
         <div
           className={`fixed top-0 left-0 h-full bg-[#1f1f1f] z-50 transform transition-transform duration-300 ${isAnimating ? "translate-x-0" : "-translate-x-full"
@@ -143,7 +156,7 @@ export default function Home() {
         </div>
       )}
 
-      {/* Main Content */}
+   
       <div
         className={`flex-1 transition-all duration-300 ${isLoginVisible ? "lg:ml-[250px]" : "ml-0"
           }`}
@@ -164,19 +177,44 @@ export default function Home() {
         </header>
 
         {/* Notes Section */}
-        <main className="px-4 sm:px-6 py-6">
-          {notes.length === 0 ? (
-            <p className="text-center text-gray-400 mt-10">
-              No notes available.
-            </p>
-          ) : (
-            <NoteList
-              notes={filteredNotes}
-              onDelete={handleDelete}
-              onNoteClick={handleNoteClick}
-            />
+      <main className="px-4 sm:px-6 py-6">
+  {notes.length === 0 ? (
+    <p className="text-center text-gray-400 mt-10">
+      No notes available.
+    </p>
+  ) : (
+    <>
+      {/* 📌 Pinned Notes */}
+      {filteredNotes.some(note => note.pinned) && (
+        <>
+          <h2 className="text-lg font-semibold text-white mb-2">📌 Pinned</h2>
+          <NoteList
+            notes={filteredNotes.filter(note => note.pinned)}
+            onDelete={handleDelete}
+            onNoteClick={handleNoteClick}
+            pinNotes={pinNote}
+          />
+        </>
+      )}
+
+      {/* 🗒️ Other Notes */}
+      {filteredNotes.some(note => !note.pinned) && (
+        <>
+          {filteredNotes.some(note => note.pinned) && (
+            <h2 className="text-lg font-semibold text-white mt-6 mb-2">Others</h2>
           )}
-        </main>
+          <NoteList
+            notes={filteredNotes.filter(note => !note.pinned)}
+            onDelete={handleDelete}
+            onNoteClick={handleNoteClick}
+            pinNotes={pinNote}
+          />
+        </>
+      )}
+    </>
+  )}
+</main>
+
 
         {/* Add Note Modal */}
         {isModalOpen && (
@@ -196,6 +234,7 @@ export default function Home() {
             <AddNotePopup
               note={selectedNote}
               onUpdate={handleNoteUpdate}
+
               onClose={() => setIsPopupOpen(false)}
             />
           </>

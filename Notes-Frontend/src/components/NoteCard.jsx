@@ -1,23 +1,50 @@
 import { MdDelete } from "react-icons/md";
 import {
-  FaThumbtack,
   FaPalette,
   FaBell,
   FaUserPlus,
   FaImage,
   FaEllipsisV,
-} from "react-icons/fa";
 
-export default function NoteCard({ note, onDelete, onClick }) {
+} from "react-icons/fa";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faThumbtack, faThumbtackSlash } from '@fortawesome/free-solid-svg-icons';
+
+export default function NoteCard({ note, onDelete, onClick, pinNote }) {
   return (
     <div
       onClick={onClick}
-      className="group relative bg-[#202124] text-white p-5 rounded-xl border border-[#3c4043] min-h-[140px] w-full break-words font-['Inter'] shadow-sm hover:shadow-md transition-shadow duration-200 cursor-pointer flex flex-col justify-between"
+      className="group relative bg-[#202124] text-white p-5 rounded-xl border border-[#3c4043] min-h-[116px] w-full break-words font-['Inter'] shadow-sm hover:shadow-md transition-shadow duration-200 cursor-pointer flex flex-col justify-between"
     >
-      {/* Pin icon - top right on hover */}
-      <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-gray-400 hover:text-white z-10">
-        <FaThumbtack className="cursor-pointer" title="Pin note" />
+
+
+      <div className="absolute top-3 right-3  transition-opacity duration-200 z-10">
+        {note.pinned ? (
+          <FontAwesomeIcon
+            icon={faThumbtackSlash}
+            style={{ color: "#fff" }}
+            className="cursor-pointer hover:text-white"
+            title="Unpin note"
+            onClick={(e) => {
+              e.stopPropagation();
+              pinNote(note.id);
+            }}
+          />
+        ) : (
+          <FontAwesomeIcon
+            icon={faThumbtack}
+            style={{ color: "#9ca3af" }}
+            className="cursor-pointer hover:text-white"
+            title="Pin note"
+            onClick={(e) => {
+              e.stopPropagation();
+              pinNote(note.id);
+            }}
+          />
+        )}
       </div>
+
+
 
       {/* Title and content */}
       <div>
