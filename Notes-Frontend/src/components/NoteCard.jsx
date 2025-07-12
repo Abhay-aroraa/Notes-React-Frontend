@@ -14,7 +14,7 @@ export default function NoteCard({ note, onDelete, onClick, pinNote }) {
   return (
     <div
       onClick={onClick}
-      className="group relative bg-[#202124] text-white p-5 rounded-xl border border-[#3c4043] min-h-[116px] w-full break-words font-['Inter'] shadow-sm hover:shadow-md transition-shadow duration-200 cursor-pointer flex flex-col justify-between"
+      className="group relative bg-[#202124] text-white p-2 rounded-xl border border-[#3c4043] min-h-[116px] w-full break-words font-['Inter'] shadow-sm hover:shadow-md transition-shadow duration-200 cursor-pointer flex flex-col justify-between"
     >
 
 

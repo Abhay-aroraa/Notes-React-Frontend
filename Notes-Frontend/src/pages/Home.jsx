@@ -57,11 +57,12 @@ const pinNote = (noteId) => {
     getAllNotes()
       .then((res) => setNotes(res.data.reverse()))
       .catch((err) => console.error(err));
-  }, []);
+  }, [pinNote(),pinUnpinNotes()]);
 
   useEffect(() => {
     document.body.style.overflow = isLoginVisible ? "hidden" : "auto";
-  }, [isLoginVisible,pinNote]);
+    pinUnpinNotes();
+  }, [isLoginVisible,pinNote(),]);
 
   const handleDelete = (id) => {
     deleteNote(id)

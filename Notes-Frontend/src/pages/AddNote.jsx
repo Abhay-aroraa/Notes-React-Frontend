@@ -101,8 +101,6 @@ export default function AddNotePopup({note, onAdd, onClose, onUpdate,pinNote }) 
               <FaUserPlus className="hover:text-white cursor-pointer" />
               <FaImage className="hover:text-white cursor-pointer" />
               <FaEllipsisV className="hover:text-white cursor-pointer" />
-              <FaUndo className="hover:text-white cursor-pointer" />
-              <FaRedo className="hover:text-white cursor-pointer" />
             </div>
 
             <div className="flex items-center gap-3">
