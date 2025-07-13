@@ -1,4 +1,5 @@
-import { MdDelete } from "react-icons/md";
+import { MdDelete,MdOutlineArchive,MdArchive  } from "react-icons/md";
+
 import {
   FaPalette,
   FaBell,
@@ -10,13 +11,13 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faThumbtack, faThumbtackSlash } from '@fortawesome/free-solid-svg-icons';
 
-export default function NoteCard({ note, onDelete, onClick, pinNote }) {
+export default function NoteCard({ note, onDelete, onClick, pinNote, archieve }) {
+
   return (
     <div
-      onClick={onClick}
+      
       className="group relative bg-[#202124] text-white p-2 rounded-xl border border-[#3c4043] min-h-[116px] w-full break-words font-['Inter'] shadow-sm hover:shadow-md transition-shadow duration-200 cursor-pointer flex flex-col justify-between"
     >
-
 
       <div className="absolute top-3 right-3  transition-opacity duration-200 z-10">
         {note.pinned ? (
@@ -47,7 +48,7 @@ export default function NoteCard({ note, onDelete, onClick, pinNote }) {
 
 
       {/* Title and content */}
-      <div>
+      <div onClick={onClick}>
         {note.title && (
           <h2 className="text-base font-medium mb-2 leading-tight pr-6">
             {note.title}
@@ -59,12 +60,16 @@ export default function NoteCard({ note, onDelete, onClick, pinNote }) {
       </div>
 
       {/* Bottom icons - only on hover */}
-      <div className="mt-3 flex items-center space-x-4 text-gray-400 text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+      <div className="mt-3 flex items-center space-x-4 text-gray-400 text-sm   transition-opacity duration-200">
         <FaPalette className="hover:text-white cursor-pointer" title="Change color" />
-        <FaBell className="hover:text-white cursor-pointer" title="Remind me" />
+   
         <FaUserPlus className="hover:text-white cursor-pointer" title="Collaborator" />
         <FaImage className="hover:text-white cursor-pointer" title="Add image" />
-        <FaEllipsisV className="hover:text-white cursor-pointer" title="More options" />
+       
+        <MdArchive className="hover:text-white cursor-pointer"   onClick={(e) => {
+            e.stopPropagation();
+            archieve(note.id);
+            console.log(note)}} />
         <MdDelete
           onClick={(e) => {
             e.stopPropagation();

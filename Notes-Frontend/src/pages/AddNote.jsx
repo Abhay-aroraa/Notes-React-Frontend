@@ -1,16 +1,15 @@
 import { useState, useEffect, useRef } from "react";
+import {MdArchive  } from "react-icons/md";
 import {
   FaBell,
   FaImage,
   FaUserPlus,
   FaPalette,
   FaEllipsisV,
-  FaUndo,
-  FaRedo,
   FaThumbtack,
 } from "react-icons/fa";
 
-export default function AddNotePopup({note, onAdd, onClose, onUpdate,pinNote }) {
+export default function AddNotePopup({note, onAdd, onClose, onUpdate, pinNotes }) {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
 
@@ -82,7 +81,7 @@ export default function AddNotePopup({note, onAdd, onClose, onUpdate,pinNote }) 
               onKeyDown={handleTitleKeyDown}
               autoFocus
             />
-            <FaThumbtack className="text-gray-400 cursor-pointer hover:text-white" onClick={pinNote} />
+            {/* <FaThumbtack className="text-gray-400 cursor-pointer hover:text-white" onClick={pinNotes} /> */}
           </div>
 
           <textarea
@@ -97,9 +96,11 @@ export default function AddNotePopup({note, onAdd, onClose, onUpdate,pinNote }) 
           <div className="flex justify-between items-center mt-2">
             <div className="flex space-x-4 text-gray-400 text-sm">
               <FaPalette className="hover:text-white cursor-pointer" />
-              <FaBell className="hover:text-white cursor-pointer" />
+           
               <FaUserPlus className="hover:text-white cursor-pointer" />
               <FaImage className="hover:text-white cursor-pointer" />
+              
+              <MdArchive className="hover:text-white cursor-pointer" />
               <FaEllipsisV className="hover:text-white cursor-pointer" />
             </div>
 

@@ -14,4 +14,9 @@ export const updateNote = (noteId, note) =>
 export const  pinUnpinNotes  = (noteId) =>
   axios.put(`${BASE_URL}/note/pin/${encodeURIComponent(noteId)}`);
 
+export const  archieveNotes  = (noteId) =>
+  axios.put(`${BASE_URL}/note/archieve/${encodeURIComponent(noteId)}`);
+
+export const  trashNotes  = (noteId) =>
+  axios.put(`${BASE_URL}/note/trash/${encodeURIComponent(noteId)}`);
 
