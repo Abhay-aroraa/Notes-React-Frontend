@@ -31,7 +31,7 @@ const Archieve = () => {
   const fetchArchivedNotes = () => {
     getAllNotes()
       .then((res) => {
-        const archived = res.data.filter((note) => note.archieve === true);
+const archived = res.data.filter((note) => note.archieve && !note.trash);
         setArchivedNotes(archived.reverse());
       })
       .catch((err) => {

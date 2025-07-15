@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getAllNotes, deleteNote,trashNotes  } from "../services/noteService";
+import { getAllNotes, deleteNote, trashNotes } from "../services/noteService";
 import NoteList from "../components/NoteList";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
@@ -37,11 +37,10 @@ const Trash = () => {
       .catch((err) => console.error("Failed to fetch trashed notes", err));
   };
 
- 
   const handleDeleteForever = (id) => {
     deleteNote(id)
       .then(() => {
-        toast.success("Note deleted ", toastStyle);
+        toast.success("Note permanently deleted", toastStyle);
         fetchTrashedNotes();
       })
       .catch((err) => {
@@ -91,7 +90,6 @@ const Trash = () => {
         isVisible={isLoginVisible}
         isAnimating={isAnimating}
         onClose={closeLogin}
-    
       />
 
       <div
@@ -110,13 +108,14 @@ const Trash = () => {
           {filteredNotes.length === 0 ? (
             <p className="text-gray-400 text-center mt-10">Trash is empty.</p>
           ) : (
-            <NoteList
-              notes={filteredNotes}
-              onDelete={handleDeleteForever}
-              onNoteClick={() => {}}
-              restoreNote={handleRestore}
-              isTrashPage={true} // Optional if your NoteList needs a flag
-            />
+          <NoteList
+  notes={filteredNotes}
+  onDelete={handleDeleteForever}
+  restoreNote={handleRestore}
+  isTrashPage={true}
+  onNoteClick={() => {}}
+/>
+
           )}
         </main>
       </div>
