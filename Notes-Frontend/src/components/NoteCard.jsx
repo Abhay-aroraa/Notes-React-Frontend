@@ -1,15 +1,13 @@
+import { useState } from "react";
 import { MdDelete, MdArchive, MdUnarchive } from "react-icons/md";
-import {
-  FaPalette,
-  FaUserPlus,
-  FaImage,
-} from "react-icons/fa";
+import { FaPalette, FaUserPlus, FaImage } from "react-icons/fa";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faThumbtack,
   faThumbtackSlash,
   faTrashRestore,
 } from "@fortawesome/free-solid-svg-icons";
+import ColorPicker from "./ColorPicker";
 
 export default function NoteCard({
   note,
@@ -19,19 +17,30 @@ export default function NoteCard({
   archieve,
   restoreNote,
   isTrashPage,
+  onColorChange,
 }) {
+  const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
+
+  const toggleColorPicker = (e) => {
+    e.stopPropagation(); 
+    setIsColorPickerOpen((prev) => !prev);
+  };
+
   return (
     <div
-      className="group relative bg-[#202124] text-white p-2 rounded-xl border border-[#3c4043] min-h-[116px] w-full break-words font-['Inter'] shadow-sm hover:shadow-md transition-shadow duration-200 cursor-pointer flex flex-col justify-between"
+
+  className="break-inside-avoid group relative text-white p-2 rounded-xl border border-[#3c4043] w-full break-words font-['Inter'] shadow-sm hover:shadow-md transition-shadow duration-200 cursor-pointer flex flex-col justify-between min-h-[125px]"
+      style={{ backgroundColor: note.color || "#202124" }}
+      onClick={onClick}
     >
-      {/* Pin Icon (if not in trash) */}
+      {/* Pin Icon */}
       {!isTrashPage && (
-        <div className="absolute top-3 right-3 transition-opacity duration-200 z-10">
+        <div className="absolute top-3 right-3 z-10">
           {note.pinned ? (
             <FontAwesomeIcon
               icon={faThumbtackSlash}
               style={{ color: "#fff" }}
-              className="cursor-pointer hover:text-white"
+              className="cursor-pointer"
               title="Unpin note"
               onClick={(e) => {
                 e.stopPropagation();
@@ -42,7 +51,7 @@ export default function NoteCard({
             <FontAwesomeIcon
               icon={faThumbtack}
               style={{ color: "#9ca3af" }}
-              className="cursor-pointer hover:text-white"
+              className="cursor-pointer"
               title="Pin note"
               onClick={(e) => {
                 e.stopPropagation();
@@ -53,8 +62,8 @@ export default function NoteCard({
         </div>
       )}
 
-      {/* Title & Content */}
-      <div onClick={onClick}>
+
+      <div>
         {note.title && (
           <h2 className="text-base font-medium mb-2 leading-tight pr-6">
             {note.title}
@@ -66,8 +75,7 @@ export default function NoteCard({
       </div>
 
       {/* Bottom Icons */}
-      <div className="mt-3 flex items-center space-x-4 text-gray-400 text-sm">
-        {/* Trash Mode Buttons */}
+      <div className="mt-3 flex items-center space-x-4 text-gray-400 text-sm relative">
         {isTrashPage ? (
           <>
             <FontAwesomeIcon
@@ -90,7 +98,25 @@ export default function NoteCard({
           </>
         ) : (
           <>
-            <FaPalette className="hover:text-white cursor-pointer" title="Change color" />
+            <div className="relative">
+              <FaPalette
+                className="hover:text-white cursor-pointer"
+                title="Change color"
+                onClick={toggleColorPicker}
+              />
+              {isColorPickerOpen && (
+                <div className="absolute bottom-6 left-0 z-20">
+                  <ColorPicker
+                    currentColor={note.color}
+                    onColorSelect={(color) => {
+                      onColorChange(note.id, color);
+                      setIsColorPickerOpen(false);
+                    }}
+                  />
+                </div>
+              )}
+            </div>
+
             <FaUserPlus className="hover:text-white cursor-pointer" title="Collaborator" />
             <FaImage className="hover:text-white cursor-pointer" title="Add image" />
 
@@ -115,12 +141,12 @@ export default function NoteCard({
             )}
 
             <MdDelete
+              className="hover:text-white cursor-pointer"
+              title="Trash"
               onClick={(e) => {
                 e.stopPropagation();
                 onDelete(note.id);
               }}
-              className="hover:text-white cursor-pointer text-base"
-              title="Trash"
             />
           </>
         )}

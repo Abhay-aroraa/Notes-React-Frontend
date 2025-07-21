@@ -20,3 +20,13 @@ export const  archieveNotes  = (noteId) =>
 export const  trashNotes  = (noteId) =>
   axios.put(`${BASE_URL}/note/trash/${encodeURIComponent(noteId)}`);
 
+export const updateNoteColor = (noteId, color) =>
+  axios.put(
+    `${BASE_URL}/note/color/${encodeURIComponent(noteId)}`,
+    { color }, // ✅ send body with color key
+    {
+      headers: {
+        'Content-Type': 'application/json', // ✅ ensure proper content type
+      },
+    }
+  );

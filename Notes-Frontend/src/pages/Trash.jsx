@@ -93,9 +93,8 @@ const Trash = () => {
       />
 
       <div
-        className={`flex-1 transition-all duration-300 ${
-          isLoginVisible ? "lg:ml-[250px]" : "ml-0"
-        }`}
+        className={`flex-1 transition-all duration-300 ${isLoginVisible ? "lg:ml-[250px]" : "ml-0"
+          }`}
       >
         <Header
           onOpenSidebar={openLogin}
@@ -108,13 +107,13 @@ const Trash = () => {
           {filteredNotes.length === 0 ? (
             <p className="text-gray-400 text-center mt-10">Trash is empty.</p>
           ) : (
-          <NoteList
-  notes={filteredNotes}
-  onDelete={handleDeleteForever}
-  restoreNote={handleRestore}
-  isTrashPage={true}
-  onNoteClick={() => {}}
-/>
+            <NoteList
+              notes={filteredNotes}
+              onDelete={handleDeleteForever}
+              restoreNote={handleRestore}
+              isTrashPage={true}
+              onNoteClick={() => { }}
+            />
 
           )}
         </main>

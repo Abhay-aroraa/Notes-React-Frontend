@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getAllNotes, trashNotes, pinUnpinNotes, archieveNotes } from "../services/noteService";
+import { getAllNotes, trashNotes, pinUnpinNotes, archieveNotes,updateNoteColor } from "../services/noteService";
 import NoteList from "../components/NoteList";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
@@ -15,6 +15,7 @@ const Archieve = () => {
     fetchArchivedNotes();
   }, []);
 
+
   useEffect(() => {
     document.body.style.overflow = isLoginVisible ? "hidden" : "auto";
   }, [isLoginVisible]);
@@ -27,6 +28,18 @@ const Archieve = () => {
       padding: '10px 16px'
     }
   };
+
+const handleColorChange = (noteId, color) => {
+  updateNoteColor(noteId, color)
+    .then(() => {
+      toast.success("Color updated", toastStyle);
+      fetchArchivedNotes();
+    })
+    .catch((err) => {
+      toast.error("Color update failed", toastStyle);
+      console.error(err);
+    });
+};
 
   const fetchArchivedNotes = () => {
     getAllNotes()
@@ -132,6 +145,7 @@ const archived = res.data.filter((note) => note.archieve && !note.trash);
               onNoteClick={() => {}}
               pinNotes={handlePin}
               archieveNote={handleUnarchive}
+              handleColorChange={handleColorChange}
             />
           )}
         </main>

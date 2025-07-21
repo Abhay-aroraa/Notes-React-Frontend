@@ -3,11 +3,13 @@ import { useEffect, useState } from "react";
 import {
   getAllNotes,
   createNote,
- trashNotes,
+  trashNotes,
   updateNote,
   pinUnpinNotes,
   archieveNotes,
+  updateNoteColor
 } from "../services/noteService";
+
 import NoteList from "../components/NoteList";
 import AddNotePopup from "./AddNote";
 import Sidebar from "../components/Sidebar";
@@ -24,6 +26,35 @@ export default function Home() {
   const [selectedNote, setSelectedNote] = useState(null);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
 
+  const toastStyle = {
+    style: {
+      background: "#2f2f2f",
+      color: "white",
+      borderRadius: "8px",
+      padding: "10px 16px",
+    },
+  };
+
+  const fetchNotes = async () => {
+    try {
+      const res = await getAllNotes();
+      const nonArchivedNotes = res.data.filter((note) => !note.archieve);
+      return nonArchivedNotes.reverse();
+    } catch (err) {
+      console.error("Fetching notes failed", err);
+      return [];
+    }
+  };
+
+  const loadNotes = () => {
+    fetchNotes().then(setNotes);
+  };
+
+  useEffect(loadNotes, []);
+
+  useEffect(() => {
+    document.body.style.overflow = isLoginVisible ? "hidden" : "auto";
+  }, [isLoginVisible]);
 
   const filteredNotes = notes.filter(
     (note) =>
@@ -41,47 +72,36 @@ export default function Home() {
     setTimeout(() => setIsLoginVisible(false), 300);
   };
 
-  const fetchNotes = () => {
-    getAllNotes()
-      .then((res) => {
-        const nonArchivedNotes = res.data.filter((note) => !note.archieve);
-        setNotes(nonArchivedNotes.reverse());
-      })
-      .catch((err) => console.error("Fetching notes failed", err));
-  };
+  // ✅ Pin/unpin with correct success toast
+  const handlePinNote = async (noteId) => {
+    try {
+      await pinUnpinNotes(noteId);
 
-  useEffect(fetchNotes, []);
+      const updatedNotes = await fetchNotes();
+      const updatedNote = updatedNotes.find((note) => note.id === noteId);
 
-  useEffect(() => {
-    document.body.style.overflow = isLoginVisible ? "hidden" : "auto";
-  }, [isLoginVisible]);
+      if (!updatedNote) {
+        toast.error("Note updated but not found", toastStyle);
+        return;
+      }
 
-  const toastStyle = {
-    style: {
-      background: '#2f2f2f',
-      color: 'white',
-      borderRadius: '8px',
-      padding: '10px 16px'
+      const message = updatedNote.pinned
+        ? "Note pin successful"
+        : "Note unpin successful";
+
+      toast.success(message, toastStyle);
+      setNotes(updatedNotes);
+    } catch (err) {
+      toast.error("Failed to pin/unpin note", toastStyle);
+      console.error("Pin/unpin failed:", err);
     }
-  };
-
-  const handlePinNote = (noteId) => {
-    pinUnpinNotes(noteId)
-      .then(() => {
-        toast.success("Note pinned/unpinned", toastStyle);
-        fetchNotes();
-      })
-      .catch((err) => {
-        toast.error("Failed to pin/unpin", toastStyle);
-        console.error("Failed to pin/unpin note", err);
-      });
   };
 
   const handleArchiveNote = (noteId) => {
     archieveNotes(noteId)
       .then(() => {
         toast.success("Note archived", toastStyle);
-        fetchNotes();
+        loadNotes();
       })
       .catch((err) => {
         toast.error("Failed to archive note", toastStyle);
@@ -110,7 +130,7 @@ export default function Home() {
     createNote(note)
       .then((res) => {
         toast.success("Note added", toastStyle);
-        setNotes([res.data, ...notes]);
+        setNotes((prevNotes) => [res.data, ...prevNotes]);
         setIsModalOpen(false);
       })
       .catch((err) => {
@@ -118,6 +138,20 @@ export default function Home() {
         console.error("Error adding note:", err);
       });
   };
+
+ const handleColorChange = (noteId, color) => {
+  updateNoteColor(noteId, color)
+    .then(() => {
+      toast.success("Color updated", toastStyle);
+      fetchNotes().then(setNotes); // ✅ update state
+    })
+    .catch((err) => {
+      toast.error("Color update failed", toastStyle);
+      console.error(err);
+    });
+};
+
+
 
   const handleNoteUpdate = (updatedNote) => {
     updateNote(updatedNote.id, updatedNote)
@@ -157,7 +191,11 @@ export default function Home() {
         onEmptyBin={handleEmptyBin}
       />
 
-      <div className={`flex-1 transition-all duration-300 ${isLoginVisible ? "lg:ml-[250px]" : "ml-0"}`}>
+      <div
+        className={`flex-1 transition-all duration-300 ${
+          isLoginVisible ? "lg:ml-[250px]" : "ml-0"
+        }`}
+      >
         <Header
           onOpenSidebar={openLogin}
           searchQuery={searchQuery}
@@ -173,13 +211,16 @@ export default function Home() {
             <>
               {filteredNotes.some((note) => note.pinned) && (
                 <>
-                  <h2 className="text-lg font-semibold text-white mb-2">📌 Pinned</h2>
+                  <h2 className="text-lg font-semibold text-white mb-2">
+                    📌 Pinned
+                  </h2>
                   <NoteList
                     notes={filteredNotes.filter((note) => note.pinned)}
                     onDelete={handleDelete}
                     onNoteClick={handleNoteClick}
                     pinNotes={handlePinNote}
                     archieveNote={handleArchiveNote}
+                     handleColorChange={handleColorChange}
                   />
                 </>
               )}
@@ -187,7 +228,9 @@ export default function Home() {
               {filteredNotes.some((note) => !note.pinned) && (
                 <>
                   {filteredNotes.some((note) => note.pinned) && (
-                    <h2 className="text-lg font-semibold text-white mt-6 mb-2">Others</h2>
+                    <h2 className="text-lg font-semibold text-white mt-6 mb-2">
+                      Others
+                    </h2>
                   )}
                   <NoteList
                     notes={filteredNotes.filter((note) => !note.pinned)}
@@ -195,6 +238,7 @@ export default function Home() {
                     onNoteClick={handleNoteClick}
                     pinNotes={handlePinNote}
                     archieveNote={handleArchiveNote}
+                     handleColorChange={handleColorChange}
                   />
                 </>
               )}
