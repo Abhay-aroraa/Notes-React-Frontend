@@ -1,3 +1,4 @@
+
 import axios from "axios";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -36,6 +37,10 @@ export const archieveNotes = (noteId) =>
 
 export const trashNotes = (noteId) =>
   axios.put(`${BASE_URL}/note/trash/${encodeURIComponent(noteId)}`, {}, getAuthHeader());
+
+
+
+
 
 export const updateNoteColor = (noteId, color) =>
   axios.put(
@@ -107,6 +112,5 @@ export const getAIResponse = async (prompt) => {
     return "Something went wrong while contacting AI.";
   }
 };
-
 
 

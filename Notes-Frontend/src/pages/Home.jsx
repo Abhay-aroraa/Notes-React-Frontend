@@ -38,6 +38,8 @@ export default function Home() {
  const fetchNotes = async () => {
   try {
     const res = await getAllNotes();
+
+    // ✅ Filter out both archived AND trashed notes
     const nonArchivedNotes = res.data.filter(
       (note) => !note.archieve && !note.trash
     );
