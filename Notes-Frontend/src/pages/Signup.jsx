@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
-import { register } from '../services/noteService';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { register } from "../services/noteService";
+import { useNavigate } from "react-router-dom";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-    confirmPassword: '',
+    email: "",
+    password: "",
+    confirmPassword: "",
   });
 
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -18,8 +18,8 @@ const SignUp = () => {
       ...formData,
       [e.target.name]: e.target.value,
     });
-    setError('');
-    setSuccess('');
+    setError("");
+    setSuccess("");
   };
 
   const handleSubmit = async (e) => {
@@ -27,19 +27,23 @@ const SignUp = () => {
     const { email, password, confirmPassword } = formData;
 
     if (password !== confirmPassword) {
-      setError('Passwords do not match');
+      setError("Passwords do not match");
       return;
     }
 
     try {
       await register(email, password);
-      setSuccess('Registration successful!');
-      setError('');
-      setTimeout(() => navigate('/'), 1000);
+      setSuccess("Registration successful!");
+      setError("");
+      setTimeout(() => navigate("/"), 1000);
     } catch (err) {
-      console.error(err);
-      setError(err?.response?.data?.message || 'Registration failed');
-      setSuccess('');
+      if (err.response?.status === 409) {
+        setError("Email already exists");
+      } else {
+        console.error(err);
+        setError(err?.response?.data?.message || "Registration failed");
+        setSuccess("");
+      }
     }
   };
 
@@ -53,7 +57,9 @@ const SignUp = () => {
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Email */}
           <div>
-            <label htmlFor="email" className="block text-sm text-gray-300 mb-1">Email</label>
+            <label htmlFor="email" className="block text-sm text-gray-300 mb-1">
+              Email
+            </label>
             <input
               type="email"
               id="email"
@@ -67,7 +73,12 @@ const SignUp = () => {
 
           {/* Password */}
           <div>
-            <label htmlFor="password" className="block text-sm text-gray-300 mb-1">Password</label>
+            <label
+              htmlFor="password"
+              className="block text-sm text-gray-300 mb-1"
+            >
+              Password
+            </label>
             <input
               type="password"
               id="password"
@@ -81,7 +92,12 @@ const SignUp = () => {
 
           {/* Confirm Password */}
           <div>
-            <label htmlFor="confirmPassword" className="block text-sm text-gray-300 mb-1">Confirm Password</label>
+            <label
+              htmlFor="confirmPassword"
+              className="block text-sm text-gray-300 mb-1"
+            >
+              Confirm Password
+            </label>
             <input
               type="password"
               id="confirmPassword"
@@ -109,7 +125,7 @@ const SignUp = () => {
         <div className="mt-6 text-center text-sm text-gray-400">
           Already have an account?
           <button
-            onClick={() => navigate('/')}
+            onClick={() => navigate("/")}
             className="ml-1 text-blue-400 hover:underline"
           >
             Login
