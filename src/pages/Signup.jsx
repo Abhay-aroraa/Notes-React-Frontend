@@ -55,9 +55,9 @@ const SignUp = () => {
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-5">
-          {/* Email */}
+       
           <div>
-            <label htmlFor="email" className="block text-sm text-gray-300 mb-1">
+            <label htmlFor="email" className="block text-sm text-gray-400 mb-1">
               Email
             </label>
             <input
@@ -71,7 +71,7 @@ const SignUp = () => {
             />
           </div>
 
-          {/* Password */}
+        
           <div>
             <label
               htmlFor="password"
@@ -90,7 +90,7 @@ const SignUp = () => {
             />
           </div>
 
-          {/* Confirm Password */}
+        
           <div>
             <label
               htmlFor="confirmPassword"
