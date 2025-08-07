@@ -29,7 +29,7 @@ export default function NoteCard({
   return (
     <div
 
-  className="break-inside-avoid group relative text-white p-2 rounded-xl border border-[#3c4043] w-full break-words font-['Inter'] shadow-sm hover:shadow-md transition-shadow duration-200 cursor-pointer flex flex-col justify-between min-h-[125px]"
+  className="break-inside-avoid group relative text-white p-2 rounded-xl border border-[#3c4043] w-full break-words font-['Inter'] shadow-sm hover:shadow-md transition-shadow duration-200 cursor-pointer flex flex-col justify-between min-h-[160px]"
       style={{ backgroundColor: note.color || "#202124" }}
       onClick={onClick}
     >

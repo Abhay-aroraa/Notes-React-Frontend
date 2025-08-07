@@ -36,10 +36,14 @@ export default function Home() {
   };
 
  const fetchNotes = async () => {
+
+
+
+
+
   try {
     const res = await getAllNotes();
-
-    // ✅ Filter out both archived AND trashed notes
+notes
     const nonArchivedNotes = res.data.filter(
       (note) => !note.archieve && !note.trash
     );
@@ -208,7 +212,7 @@ export default function Home() {
           setSearchQuery={setSearchQuery}
         />
 
-        <main className="px-4 sm:px-6 py-6">
+        <main className="px-2 sm:px-2 py-2">
           {notes.length === 0 ? (
             <p className="text-center text-gray-400 mt-10">
               No notes available.

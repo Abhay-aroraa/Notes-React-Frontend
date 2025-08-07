@@ -13,7 +13,7 @@ export default function NoteList({
   if (!Array.isArray(notes)) return null;
 
   return (
-    <div className="px-1 py-1 max-w-screen-xl mx-auto">
+    <div className="  max-w-screen-xl mx-auto">
       <div className="columns-2 sm:columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4">
         {notes.map((note) => (
           <NoteCard
