@@ -65,12 +65,12 @@ export default function NoteCard({
 
       <div>
         {note.title && (
-          <h2 className="text-base font-medium mb-2 leading-tight pr-6 line-clamp-1">
+          <h2 className="text-base  sm:text-base font-medium mb-2 leading-tight pr-6 line-clamp-1">
   {note.title}
 </h2>
 
         )}
-       <p className="text-sm whitespace-pre-wrap leading-snug text-gray-300 line-clamp-3 sm:line-clamp-none">
+       <p className="text-sm sm:text-base whitespace-pre-wrap leading-snug text-gray-300 line-clamp-3 sm:line-clamp-none">
   {note.content}
 </p>
 
