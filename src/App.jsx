@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import Home from './pages/Home';
-import Trash from './pages/trash';
+import Trash from './pages/Trash';
 import Hide from './pages/Hide'
 import Login from './pages/Login';
 import SignUp from './pages/Signup';
