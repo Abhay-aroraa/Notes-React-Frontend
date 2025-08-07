@@ -12,8 +12,13 @@ theme: {
       colors: {
       'gkeep-text': 'rgb(232, 234, 237)',
     },
+
   },
+  
 },
 
-  plugins: [],
+ plugins: [
+    require('@tailwindcss/line-clamp'),
+  ],
+
 };

@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { MdArchive } from "react-icons/md";
 import {
@@ -7,7 +6,7 @@ import {
   FaPalette,
   FaEllipsisV,
 } from "react-icons/fa";
-import {getAIResponse} from "../services/noteService"
+import { getAIResponse } from "../services/noteService";
 import useIsMobile from "../components/useInMobile";
 
 export default function AddNotePopup({ note, onAdd, onClose, onUpdate }) {
@@ -18,32 +17,38 @@ export default function AddNotePopup({ note, onAdd, onClose, onUpdate }) {
 
   // ✅ AI States
   const [aiResult, setAiResult] = useState("");
+  const [aiActionType, setAiActionType] = useState(null); // NEW
   const [loading, setLoading] = useState(false);
 
   // 🧠 AI Call Handler
-const handleAI = async (type) => {
-  let prompt = "";
+  const handleAI = async (type) => {
+    let prompt = "";
 
-  if (type === "summarize") {
-    prompt = `Summarize this note: ${content}`;
-  } else if (type === "title") {
-    prompt = `Give a better title for this note: ${content}`;
-  } else if (type === "bullet") {
-    prompt = `Convert this note into bullet points: ${content}`;
-  }
+    if (type === "summarize") {
+      prompt = `Summarize this note: ${content}`;
+    } else if (type === "title") {
+      prompt = `Give a short, professional title for this note: "${content}". Only return the title without any explanation.`;
+    } else if (type === "bullet") {
+      prompt = `Convert this note into bullet points: ${content}`;
+    }
 
-  setLoading(true);
-  const response = await getAIResponse(prompt);
-  setAiResult(response);
-  setLoading(false);
-};
+    setAiActionType(type); // track which type of AI action
+    setLoading(true);
+    const response = await getAIResponse(prompt);
+    setAiResult(response);
+    setLoading(false);
+  };
 
-
+  // ✅ Apply AI result to either title or content
   const applyToNote = () => {
     if (aiResult) {
-      // You can adjust this if it was a title improvement
-      setContent(aiResult);
+      if (aiActionType === "title") {
+        setTitle(aiResult);
+      } else {
+        setContent(aiResult);
+      }
       setAiResult("");
+      setAiActionType(null);
     }
   };
 
@@ -78,6 +83,12 @@ const handleAI = async (type) => {
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
     }
   }, [content]);
+
+  const handleClose = () => {
+    setAiResult("");
+    setAiActionType(null);
+    onClose();
+  };
 
   // ✨ Reusable Form UI
   const formUI = (
@@ -147,16 +158,15 @@ const handleAI = async (type) => {
       <div className="flex justify-between items-center mt-2">
         <div className="flex space-x-4 text-gray-400 text-sm">
           <FaPalette className="hover:text-white cursor-pointer" />
-      
-          <MdArchive className="hover:text-white cursor-pointer" />
-          <FaEllipsisV className="hover:text-white cursor-pointer" />
+          {/* <MdArchive className="hover:text-white cursor-pointer" />
+          <FaEllipsisV className="hover:text-white cursor-pointer" /> */}
         </div>
 
         <div className="flex items-center gap-3">
           <button type="submit" className="text-sm font-medium text-white hover:underline">
             {note ? "Update" : "Add"}
           </button>
-          <button type="button" onClick={onClose} className="text-sm font-medium text-white hover:underline">
+          <button type="button" onClick={handleClose} className="text-sm font-medium text-white hover:underline">
             Close
           </button>
         </div>
@@ -164,23 +174,20 @@ const handleAI = async (type) => {
     </form>
   );
 
- return isMobile ? (
-  // 📱 Full screen on mobile
-  <div className="fixed inset-0 z-50 bg-[#202124] text-white p-4 flex flex-col">
-    {formUI}
-  </div>
-) : (
-  // 💻 Desktop centered modal
-  <div className="fixed inset-0 z-50 bg-black bg-opacity-40 flex items-center justify-center px-4 py-10">
-    <div
-      className="bg-[#202124] text-white w-full max-w-3xl rounded-xl shadow-lg p-4 overflow-y-auto"
-      style={{
-        maxHeight: "90vh", // allows longer content to fit
-      }}
-    >
+  return isMobile ? (
+    // 📱 Full screen on mobile
+    <div className="fixed inset-0 z-50 bg-[#202124] text-white p-4 flex flex-col">
       {formUI}
     </div>
-  </div>
-);
-
+  ) : (
+    // 💻 Desktop centered modal
+    <div className="fixed inset-0 z-50 bg-black bg-opacity-40 flex items-center justify-center px-4 py-10">
+      <div
+        className="bg-[#202124] text-white w-full max-w-3xl rounded-xl shadow-lg p-4 overflow-y-auto"
+        style={{ maxHeight: "90vh" }}
+      >
+        {formUI}
+      </div>
+    </div>
+  );
 }
