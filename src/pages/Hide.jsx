@@ -5,7 +5,7 @@ import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import { toast } from "react-hot-toast";
 
-const archieve = () => {
+const Hide = () => {
   const [archivedNotes, setArchivedNotes] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoginVisible, setIsLoginVisible] = useState(false);
@@ -154,4 +154,4 @@ const archived = res.data.filter((note) => note.archieve && !note.trash);
   );
 };
 
-export default archieve;
+export default Hide;
